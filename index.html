@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Produk</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f4f6f8;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-tambah {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-hapus {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-tambah:hover {
+            background: #218838;
+        }
+
+        .btn-hapus:hover {
+            background: #c82333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #343a40;
+            color: white;
+        }
+
+        tr:hover {
+            background: #f1f1f1;
+        }
+
+        .kosong {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>📦 Manajemen Produk</h1>
+
+    <!-- Form Tambah Produk -->
+    <form id="formProduk">
+
+        <input
+            type="text"
+            id="nama"
+            placeholder="Nama Produk"
+            required
+        >
+
+        <input
+            type="number"
+            id="harga"
+            placeholder="Harga"
+            required
+        >
+
+        <input
+            type="number"
+            id="stok"
+            placeholder="Stok"
+            required
+        >
+
+        <button type="submit" class="btn-tambah">
+            Tambah
+        </button>
+
+    </form>
+
+    <!-- Tabel Produk -->
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nama Produk</th>
+                <th>Harga</th>
+                <th>Stok</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+
+        <tbody id="tabelProduk">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script>
+
+   
+
+    let produkList = [
+        {
+            id: 1,
+            nama: "Laptop",
+            harga: 12000000,
+            stok: 10
+        },
+        {
+            id: 2,
+            nama: "Smartphone",
+            harga: 5000000,
+            stok: 15
+        },
+        {
+            id: 3,
+            nama: "Tablet",
+            harga: 3000000,
+            stok: 8
+        },
+        {
+            id: 4,
+            nama: "Headphone",
+            harga: 750000,
+            stok: 20
+        },
+        {
+            id: 5,
+            nama: "Smartwatch",
+            harga: 1500000,
+            stok: 12
+        }
+    ];
+
+
+   
+    function tampilkanProduk() {
+
+        const tabelProduk = document.getElementById("tabelProduk");
+
+        tabelProduk.innerHTML = "";
+
+        if (produkList.length === 0) {
+
+            tabelProduk.innerHTML = `
+                <tr>
+                    <td colspan="5" class="kosong">
+                        Belum ada produk
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        produkList.forEach(({ id, nama, harga, stok }) => {
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${id}</td>
+                <td>${nama}</td>
+                <td>Rp ${harga.toLocaleString("id-ID")}</td>
+                <td>${stok}</td>
+                <td>
+                    <button
+                        class="btn-hapus"
+                        onclick="hapusProduk(${id})">
+                        Hapus
+                    </button>
+                </td>
+            `;
+
+            tabelProduk.appendChild(row);
+
+        });
+    }
+
+
+    
+
+    function tambahProduk(...produkBaru) {
+
+        produkList = [
+            ...produkList,
+            ...produkBaru
+        ];
+
+        tampilkanProduk();
+    }
+
+
+   
+
+    function hapusProduk(id) {
+
+        produkList = produkList.filter(
+            produk => produk.id !== id
+        );
+
+        tampilkanProduk();
+    }
+
+
+   
+
+    const formProduk = document.getElementById("formProduk");
+
+    formProduk.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const nama = document.getElementById("nama").value;
+        const harga = Number(
+            document.getElementById("harga").value
+        );
+        const stok = Number(
+            document.getElementById("stok").value
+        );
+
+       
+        const idBaru =
+            produkList.length > 0
+                ? Math.max(...produkList.map(produk => produk.id)) + 1
+                : 1;
+
+
+       
+        const produkBaru = {
+            id: idBaru,
+            nama: nama,
+            harga: harga,
+            stok: stok
+        };
+
+
+        
+        tambahProduk(produkBaru);
+
+
+        
+        formProduk.reset();
+
+    });
+
+
+    
+
+    tampilkanProduk();
+
+</script>
+
+</body>
+</html>
